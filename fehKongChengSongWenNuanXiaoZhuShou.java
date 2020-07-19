@@ -33,10 +33,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 class fehKongChengSongWenNuanXiaoZhuShou extends fehKongChengDingShiNaoZhong {// 可调用fehKongChengDingShiNaoZhong中的方法
-	static boolean iconAdded2Tray = false;// 标志位，避免将图标重复添加到托盘
-	static boolean windowClosed = false;// 标志位，避免重复打开窗口
-	static int windowIndex;// 当前开启的窗口序号
-
 	static int multiple = 0;// 根据用户选择分钟还是小时为单位而变化
 
 	static ArrayList<Integer> inputs = new ArrayList<Integer>();// 输入的时间的列表
@@ -64,7 +60,6 @@ class fehKongChengSongWenNuanXiaoZhuShou extends fehKongChengDingShiNaoZhong {//
 	}
 
 	private static void timeSet() {
-		windowIndex = 0;
 		final int formWidth = 675;
 		final int formHeight = 350;
 
@@ -72,11 +67,6 @@ class fehKongChengSongWenNuanXiaoZhuShou extends fehKongChengDingShiNaoZhong {//
 		JFrame f = new JFrame("你好，" + map.get("USERNAME") + "～");// 获取计算机用户名
 		f.setLayout(null);
 		f.setSize(formWidth, formHeight);
-		f.addWindowListener(new WindowAdapter() {// 窗口事件
-			public void windowClosing(WindowEvent e) {// 监视关闭窗口动作
-				windowClosed = true;
-			}
-		});
 
 		try {// 设置窗口图标
 			Image windowIconImage = ImageIO.read(f.getClass().getResource("/img/icon/top.jpg"));
@@ -84,44 +74,6 @@ class fehKongChengSongWenNuanXiaoZhuShou extends fehKongChengDingShiNaoZhong {//
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		Toolkit toolKit = Toolkit.getDefaultToolkit();
-		Image trayIconImage = toolKit.getImage(f.getClass().getResource("/img/icon/top.jpg"));
-		SystemTray systemTray = SystemTray.getSystemTray();// 获得系统托盘的实例
-		TrayIcon trayIcon = new TrayIcon(trayIconImage, "飞空城送温暖小助手");
-		trayIcon.setImageAutoSize(true);
-		if (!iconAdded2Tray) {// 防止向托盘添加多个图标
-			try {
-				systemTray.add(trayIcon);// 设置托盘的图标
-				iconAdded2Tray = true;
-			} catch (AWTException e) {
-				e.printStackTrace();
-			}
-		}
-		trayIcon.addMouseListener(new MouseAdapter() {// 增加鼠标监听事件
-			public void mouseClicked(MouseEvent e) {
-				if (windowClosed) {// 仅当窗口关闭时，点击图标才可以打开窗口
-					f.dispose();
-					windowClosed = false;
-					switch(windowIndex) {
-						case 0:
-							timeSet();
-							break;
-						case 1:
-							timeShow();
-							break;
-						case 2:
-							setAlarm();
-							break;
-						case 3:
-							timeCountdown();
-							break;
-						default:
-							System.exit(0);
-					}
-				}
-			}
-		});
 
 		JPanel imgPanel=(JPanel) f.getContentPane();//内容面板必须强转为JPanel才可以实现下面的设置透明
 		imgPanel.setOpaque(false);//将内容面板设为透明
@@ -241,25 +193,19 @@ class fehKongChengSongWenNuanXiaoZhuShou extends fehKongChengDingShiNaoZhong {//
 			}
 		});
 
-		f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setResizable(false);
 		f.setLocation((screenWidth - formWidth) / 2, (screenHeight - formHeight) / 2);
 		f.setVisible(true);
 	}
 
 	private static void timeShow() {
-		windowIndex = 1;
 		final int formWidth = 870;
-		final int formHeight = 850;
+		final int formHeight = 760;
 
 		JFrame f = new JFrame("信息确认");
 		f.setLayout(null);
 		f.setSize(formWidth, formHeight);
-		f.addWindowListener(new WindowAdapter() {// 窗口事件
-			public void windowClosing(WindowEvent e) {// 监视关闭窗口动作
-				windowClosed = true;
-			}
-		});
 
 		try {// 设置窗口图标
 			Image windowIconImage = ImageIO.read(f.getClass().getResource("/img/icon/Milas_Turnwheel.png"));
@@ -381,18 +327,7 @@ class fehKongChengSongWenNuanXiaoZhuShou extends fehKongChengDingShiNaoZhong {//
 		});
 		f.add(confirm);
 
-		JButton exit = new JButton("退出程序");
-		exit.setFont(new Font("宋体", Font.PLAIN, 30));
-		exit.setBounds(40, 710, 780, 50);
-		exit.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				System.exit(0);
-			}
-		});
-		f.add(exit);
-
-		f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setResizable(false);
 		f.setLocation((screenWidth - formWidth) / 2, (screenHeight - formHeight) / 2);
 		f.setVisible(true);
@@ -483,18 +418,12 @@ class fehKongChengSongWenNuanXiaoZhuShou extends fehKongChengDingShiNaoZhong {//
 	}
 
 	private static void setAlarm() {
-		windowIndex = 2;
 		final int formWidth = 730;
 		final int formHeight = 510;
 
 		JFrame f = new JFrame("设定定时提醒");
 		f.setLayout(null);
 		f.setSize(formWidth, formHeight);
-		f.addWindowListener(new WindowAdapter() {// 窗口事件
-			public void windowClosing(WindowEvent e) {// 监视关闭窗口动作
-				windowClosed = true;
-			}
-		});
 
 		try {// 设置窗口图标
 			Image windowIconImage = ImageIO.read(f.getClass().getResource("/img/icon/Milas_Turnwheel.png"));
@@ -643,26 +572,20 @@ class fehKongChengSongWenNuanXiaoZhuShou extends fehKongChengDingShiNaoZhong {//
 		});
 		f.add(back);
 
-		f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setResizable(false);
 		f.setLocation((screenWidth - formWidth) / 2, (screenHeight - formHeight) / 2);
 		f.setVisible(true);
 	}
 
 	private static void timeCountdown() {
-		windowIndex = 3;
 		final int formWidth = 870;
-		final int formHeight = 540;
+		final int formHeight = 630;
 
 		clock = new fehKongChengDingShiNaoZhong();
 		clock.setSize(formWidth, formHeight);
 		clock.setTitle("定时提醒");
 		clock.setLayout(null);
-		clock.addWindowListener(new WindowAdapter() {// 窗口事件
-			public void windowClosing(WindowEvent e) {// 监视关闭窗口动作
-				windowClosed = true;
-			}
-		});
 
 		try {// 设置窗口图标
 			Image windowIconImage = ImageIO.read(clock.getClass().getResource("/img/icon/Milas_Turnwheel.png"));
@@ -670,6 +593,17 @@ class fehKongChengSongWenNuanXiaoZhuShou extends fehKongChengDingShiNaoZhong {//
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
+
+		Toolkit toolKit = Toolkit.getDefaultToolkit();
+		Image trayIconImage = toolKit.getImage(clock.getClass().getResource("/img/icon/Milas_Turnwheel.png"));
+		trayIcon = new TrayIcon(trayIconImage, "飞空城送温暖小助手正在计时中\n目标时间：" + targetTime);
+		trayIcon.setImageAutoSize(true);
+		trayIcon.addMouseListener(new MouseAdapter() {// 增加鼠标监听事件
+			public void mouseClicked(MouseEvent e) {
+				clock.setVisible(true);
+				systemTray.remove(trayIcon);
+			}
+		});
 
 		JPanel imgPanel=(JPanel) clock.getContentPane();
 		imgPanel.setOpaque(false);
@@ -724,13 +658,30 @@ class fehKongChengSongWenNuanXiaoZhuShou extends fehKongChengDingShiNaoZhong {//
 		back.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
+				exit = true;
 				clock.dispose();
 				setAlarm();
 			}
 		});
 		clock.add(back);
 
-		clock.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		JButton hide = new JButton("将窗口最小化到托盘区");
+		hide.setFont(new Font("宋体", Font.PLAIN, 30));
+		hide.setBounds(40, 490, 780, 50);
+		hide.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				clock.setVisible(false);
+				try {
+					systemTray.add(trayIcon);// 设置托盘的图标
+				} catch (AWTException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		clock.add(hide);
+
+		clock.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		clock.setResizable(false);
 		clock.setLocation((screenWidth - formWidth) / 2, (screenHeight - formHeight) / 2);
 		clock.setVisible(true);
@@ -747,10 +698,14 @@ class fehKongChengDingShiNaoZhong extends JFrame implements Runnable{
 	static int screenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();// 获取屏幕的尺寸
 	static int screenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 
+	static SystemTray systemTray = SystemTray.getSystemTray();
+	static TrayIcon trayIcon;
+
 	static JLabel thisMomentL;
+	static boolean exit;
 
 	static String targetTime;
-	static String message = "心里的花，我想要带你归家。在那深夜酒吧，哪管它是真是假。请你尽情摇摆，忘记钟意叻Ta。你系最迷人噶，你知道吗？";
+	static String message = "";
 	static boolean voiceAlarm = false;
 	public void sendValue(String targetTimeValue, String messageValue, boolean voiceAlarmValue) {// 接收另一个类中的参数
 		targetTime = targetTimeValue;
@@ -762,13 +717,14 @@ class fehKongChengDingShiNaoZhong extends JFrame implements Runnable{
 		long targetTimeClockLong;
 		long thisMomentLong;
 		long offset;
-		boolean exit = false;
 		try {
 			targetTimeClockLong = df.parse(targetTime).getTime();
 		}
 		catch (Exception e) {
 			targetTimeClockLong = 0;
 		}
+
+		exit = false;
 		while(!exit) {
 			Date thisMoment = new Date();
 			thisMomentLong = thisMoment.getTime();
@@ -776,6 +732,7 @@ class fehKongChengDingShiNaoZhong extends JFrame implements Runnable{
 			offset = thisMomentLong % 1000 - 500;
 			if (thisMomentLong > targetTimeClockLong - 1000) {
 				dispose();
+				systemTray.remove(trayIcon);
 				alarm();
 				exit = true;
 			}
